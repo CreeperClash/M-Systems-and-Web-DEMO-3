@@ -1,0 +1,11 @@
+# Local Claude Code settings, not part of the site
+.claude/
+
+# OS cruft
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Node
+node_modules/
+npm-debug.log*

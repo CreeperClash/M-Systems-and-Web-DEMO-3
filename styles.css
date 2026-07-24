@@ -1,0 +1,523 @@
+/* ============================================================
+   Purremium Dining — shared stylesheet
+   ============================================================ */
+
+:root{
+  --cream:#f8f4ec;
+  --cream-deep:#efe7da;
+  --ink:#33281f;
+  --ink-soft:#6b5b4c;
+  --ginger:#c9772f;
+  --ginger-deep:#a75d20;
+  --sage:#c3cabb;
+  --sage-deep:#8b9482;
+  --shadow:0 1px 2px rgba(51,40,31,.05), 0 12px 32px -12px rgba(51,40,31,.18);
+  --shadow-lift:0 1px 2px rgba(51,40,31,.05), 0 22px 44px -18px rgba(51,40,31,.3);
+  --serif:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;
+  --sans:"Segoe UI",-apple-system,BlinkMacSystemFont,Inter,system-ui,sans-serif;
+  --wrap:1180px;
+}
+
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  background:var(--cream);
+  color:var(--ink);
+  font-family:var(--sans);
+  font-size:17px;
+  line-height:1.65;
+  -webkit-font-smoothing:antialiased;
+  display:flex;flex-direction:column;min-height:100vh;
+}
+main{flex:1}
+img{max-width:100%;display:block}
+a{color:inherit}
+
+.wrap{width:100%;max-width:var(--wrap);margin-inline:auto;padding-inline:28px}
+
+/* ---------- nav ---------- */
+.nav{
+  position:sticky;top:0;z-index:50;
+  background:rgba(248,244,236,.88);
+  -webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);
+  border-bottom:1px solid rgba(51,40,31,.08);
+  transition:box-shadow .35s ease;
+}
+.nav.stuck{box-shadow:0 10px 30px -22px rgba(51,40,31,.55)}
+/* Nav links now live around the cat on the front page, so the header
+   holds nothing but the centred name. */
+.nav-inner{
+  display:flex;align-items:center;justify-content:center;
+  max-width:var(--wrap);margin-inline:auto;
+  padding:15px 28px;
+}
+.brand{
+  font-family:var(--serif);
+  font-size:1.32rem;font-weight:600;letter-spacing:.01em;
+  text-decoration:none;display:flex;align-items:center;gap:.55rem;
+}
+.brand .paw{
+  display:inline-flex;
+  width:22px;height:22px;
+  flex:none;
+  color:var(--ginger);
+  transform-origin:50% 62%;
+  will-change:transform;
+}
+.brand .paw svg{width:100%;height:100%;display:block;fill:currentColor}
+
+/* Each letter is its own span (built in site.js) so the wave can be
+   staggered left to right via --i. */
+.brand-text{display:inline-flex}
+.brand-text span{display:inline-block;will-change:transform}
+
+@keyframes brandWave{
+  0%   {transform:translateY(0) rotate(0deg);      color:var(--ink)}
+  30%  {transform:translateY(-9px) rotate(-7deg);  color:var(--ginger)}
+  55%  {transform:translateY(3px) rotate(4deg)}
+  75%  {transform:translateY(-2px) rotate(-2deg)}
+  100% {transform:translateY(0) rotate(0deg);      color:var(--ink)}
+}
+@keyframes pawWiggle{
+  0%   {transform:scale(1) rotate(0deg)}
+  20%  {transform:scale(1.45) rotate(-18deg)}
+  40%  {transform:scale(1.45) rotate(16deg)}
+  60%  {transform:scale(1.38) rotate(-12deg)}
+  80%  {transform:scale(1.2) rotate(7deg)}
+  100% {transform:scale(1) rotate(0deg)}
+}
+
+/* .wave is added on mouseenter and removed when the last letter
+   finishes, so the cycle plays once and can be replayed by
+   hovering away and back. */
+.brand.wave .paw{
+  animation:pawWiggle .8s cubic-bezier(.34,1.4,.64,1) both;
+}
+.brand.wave .brand-text span{
+  animation:brandWave var(--wave-dur, .5s) ease both;
+  animation-delay:calc(var(--i) * var(--stagger, 40ms));
+}
+/* ---------- buttons ---------- */
+.btn{
+  display:inline-block;text-decoration:none;
+  background:var(--ginger);color:#fff;
+  padding:13px 26px;border-radius:999px;
+  font-family:inherit;
+  font-size:.9rem;letter-spacing:.05em;text-transform:uppercase;font-weight:600;
+  border:none;cursor:pointer;
+  box-shadow:0 8px 20px -10px rgba(167,93,32,.9);
+  transition:background .25s ease, transform .25s ease, box-shadow .25s ease;
+}
+.btn:hover{background:var(--ginger-deep);transform:translateY(-2px);box-shadow:0 14px 26px -12px rgba(167,93,32,.95)}
+.btn.ghost{
+  background:transparent;color:var(--ink);
+  border:1.5px solid rgba(51,40,31,.22);box-shadow:none;
+}
+.btn.ghost:hover{background:rgba(51,40,31,.05);border-color:rgba(51,40,31,.4)}
+
+/* ---------- home hero (index only) ---------- */
+.hero-wrap{position:relative}
+.hero{
+  position:relative;
+  padding:0;
+  aspect-ratio:1920/800;
+  min-height:300px;
+  overflow:hidden;
+  background:var(--sage);
+}
+.hero-img{
+  width:100%;height:100%;
+  object-fit:cover;
+  object-position:center;
+}
+
+/* ---------- pill navigation, ringing the cat ----------
+   A regular pentagon (point down) on an ellipse centred on the cat at
+   53% / 50%, radii 38% / 40% — every pill sits the same distance from
+   the centre and the same angle apart. Percentages map onto the photo
+   because the hero keeps its 1920x800 ratio. */
+.pill-about    {--x:30.7%; --y:17.6%}
+.pill-menu     {--x:75.3%; --y:17.6%}
+.pill-residents{--x:89.1%; --y:62.4%}
+.pill-visit    {--x:16.9%; --y:62.4%}
+.pill-book     {--x:53%;   --y:90%}   /* over the cat's legs, by design */
+
+.hero-nav{position:absolute;inset:0;z-index:4;pointer-events:none}
+.pill{
+  position:absolute;
+  left:var(--x);top:var(--y);
+  transform:translate(-50%,-50%);
+  pointer-events:auto;
+  display:inline-block;white-space:nowrap;
+  padding:18px 39px;
+  border-radius:999px;
+  /* medium -> light brown; both ends clear AA contrast against white */
+  background:linear-gradient(155deg,#96694a 0%,#8b6242 100%);
+  color:#fff;text-decoration:none;
+  font-size:1.26rem;font-weight:600;
+  letter-spacing:.1em;text-transform:uppercase;
+  border:1px solid rgba(255,255,255,.2);
+  text-shadow:0 1px 2px rgba(46,29,16,.4);
+  box-shadow:
+    0 6px 18px -6px rgba(46,29,16,.55),
+    0 1px 2px rgba(46,29,16,.2);
+  transition:
+    transform .3s cubic-bezier(.34,1.45,.64,1),
+    box-shadow .3s ease,
+    background .3s ease;
+}
+.pill:hover,
+.pill:focus-visible{
+  transform:translate(-50%,-50%) scale(1.13);
+  background:linear-gradient(155deg,#a8794f 0%,#96694a 100%);
+  box-shadow:
+    0 0 0 7px rgba(150,105,74,.20),
+    0 0 30px 8px rgba(150,105,74,.45),
+    0 16px 32px -10px rgba(46,29,16,.6);
+}
+.pill:focus-visible{outline:2px solid #fff;outline-offset:3px}
+.pill:active{transform:translate(-50%,-50%) scale(1.05)}
+
+/* ---------- googly eyes ----------
+   Sockets are positioned + sized in px by site.js from the measured
+   circles in the source photo (r=39.5px at 1920x800), so they stay
+   locked to the artwork at any viewport size. Pupils are 60% of the
+   socket, so max travel is 20% of socket size — they can never
+   escape the white. */
+.googly{position:absolute;inset:0;pointer-events:none}
+.socket{position:absolute;border-radius:50%}
+.pupil{
+  position:absolute;
+  left:20%;top:20%;width:60%;height:60%;
+  border-radius:50%;
+  background:radial-gradient(circle at 34% 28%, #4b4b4b 0%, #1b1b1b 38%, #060606 100%);
+  box-shadow:
+    inset 0 -2px 5px rgba(255,255,255,.10),
+    0 2px 6px rgba(0,0,0,.45);
+  will-change:transform;
+}
+/* specular highlight — sells the plastic googly-eye look */
+.pupil::after{
+  content:"";position:absolute;
+  left:22%;top:16%;width:26%;height:26%;
+  border-radius:50%;
+  background:rgba(255,255,255,.72);
+  filter:blur(.5px);
+}
+
+/* ---------- laser pointer cursor ---------- */
+/* .laser is a zero-size point moved by JS; the inner <i> is the visual,
+   so CSS hover states can scale it without fighting the JS transform. */
+.laser{
+  display:none;
+  position:fixed;left:0;top:0;
+  width:0;height:0;
+  z-index:9999;
+  pointer-events:none;
+  will-change:transform;
+  transition:opacity .25s ease;
+}
+.laser > i{
+  position:absolute;left:0;top:0;
+  display:block;border-radius:50%;
+  transform:translate(-50%,-50%);
+  transition:transform .18s ease, opacity .3s ease;
+}
+.laser-halo > i{
+  width:52px;height:52px;
+  background:radial-gradient(circle,
+    rgba(255,45,25,.34) 0%,
+    rgba(255,35,15,.16) 42%,
+    rgba(255,30,10,.05) 66%,
+    transparent 74%);
+  filter:blur(3px);
+}
+.laser-core > i{
+  width:11px;height:11px;
+  background:radial-gradient(circle,
+    #ffffff 0%,
+    #ffd9d2 22%,
+    #ff4a34 46%,
+    #e2110a 72%,
+    rgba(214,10,5,0) 100%);
+  box-shadow:
+    0 0 5px 1.5px rgba(255,45,25,.95),
+    0 0 14px 4px rgba(255,30,12,.6),
+    0 0 34px 10px rgba(255,20,8,.28);
+}
+/* dot swells when it's over something clickable */
+.laser-halo.hot > i{transform:translate(-50%,-50%) scale(1.5);opacity:.85}
+.laser-core.hot > i{transform:translate(-50%,-50%) scale(1.35)}
+
+@media (hover:hover) and (pointer:fine){
+  html.laser-on,
+  html.laser-on body,
+  html.laser-on a,
+  html.laser-on button,
+  html.laser-on select,
+  html.laser-on label,
+  html.laser-on .btn{cursor:none}
+  /* text fields keep a real caret — you still need to aim inside them */
+  html.laser-on input[type="text"],
+  html.laser-on input[type="email"],
+  html.laser-on input[type="date"],
+  html.laser-on textarea{cursor:text}
+  html.laser-on .laser{display:block}
+}
+
+/* ---------- shared type ---------- */
+.eyebrow{
+  display:inline-flex;align-items:center;gap:10px;
+  font-size:.76rem;letter-spacing:.22em;text-transform:uppercase;
+  color:var(--ginger-deep);font-weight:600;margin:0 0 22px;
+}
+.eyebrow::before{content:"";width:34px;height:1.5px;background:var(--ginger);opacity:.6}
+
+section{padding-block:104px}
+.section-head{max-width:38rem;margin-bottom:56px}
+.section-head.center{margin-inline:auto;text-align:center}
+h2{
+  font-family:var(--serif);font-weight:500;
+  font-size:clamp(2rem,3.6vw,2.9rem);line-height:1.12;letter-spacing:-.015em;
+  margin:14px 0 16px;
+}
+.section-head p{color:var(--ink-soft);margin:0;font-size:1.05rem}
+
+/* ---------- sub-page header ---------- */
+.page-head{padding-block:44px 0}
+.page-head .inner{max-width:44rem}
+.page-head h1{
+  font-family:var(--serif);font-weight:500;
+  font-size:clamp(2.3rem,4.8vw,3.5rem);
+  line-height:1.06;letter-spacing:-.02em;
+  margin:0 0 18px;
+}
+.page-head h1 em{font-style:italic;color:var(--ginger-deep)}
+.page-head .lede{font-size:1.12rem;color:var(--ink-soft);max-width:34rem;margin:0}
+.page-head + section{padding-top:58px}
+/* A dark section straight after the intro needs a gap above it — its
+   background edge would otherwise butt right up against the lede. */
+.page-head + .visit{margin-top:44px}
+
+/* ---------- about ---------- */
+.about-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:72px;align-items:center}
+.about-copy p{color:var(--ink-soft);margin:0 0 18px}
+.about-copy p:first-of-type{
+  font-family:var(--serif);font-size:1.3rem;line-height:1.5;color:var(--ink);
+}
+.about-copy h2:first-child{margin-top:0}
+.rules{list-style:none;margin:30px 0 0;padding:0;display:grid;gap:12px}
+.rules li{position:relative;padding-left:30px;color:var(--ink-soft)}
+.rules li::before{
+  content:"";position:absolute;left:6px;top:.62em;
+  width:8px;height:8px;border-radius:50%;
+  background:var(--ginger);opacity:.45;
+}
+.polaroid{
+  background:#fff;padding:16px 16px 62px;border-radius:6px;
+  box-shadow:var(--shadow);transform:rotate(-2.2deg);
+  position:relative;margin:0;
+}
+/* Source photo is 1920x800, so this crop is horizontal only —
+   54% centres the frame on the cat rather than the empty wall. */
+.polaroid img{
+  width:100%;height:auto;
+  border-radius:3px;
+  aspect-ratio:4/3.4;
+  object-fit:cover;
+  object-position:54% center;
+}
+.polaroid figcaption{
+  position:absolute;left:0;right:0;bottom:20px;text-align:center;
+  font-family:var(--serif);font-style:italic;color:var(--ink-soft);font-size:1rem;
+}
+
+/* ---------- menu ---------- */
+.menu-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:26px}
+.card{
+  background:#fff;border-radius:16px;padding:30px 28px 32px;
+  box-shadow:var(--shadow);
+  transition:transform .3s ease, box-shadow .3s ease;
+}
+.card:hover{transform:translateY(-5px);box-shadow:var(--shadow-lift)}
+.card h3{
+  font-family:var(--serif);font-weight:600;font-size:1.25rem;
+  margin:0 0 20px;padding-bottom:14px;
+  border-bottom:1px solid rgba(51,40,31,.1);
+  text-align:center;
+}
+.item{display:flex;justify-content:space-between;gap:16px;align-items:baseline;padding-block:9px}
+.item + .item{border-top:1px dotted rgba(51,40,31,.14)}
+.item .name{font-weight:500}
+.item .name small{display:block;font-weight:400;font-size:.83rem;color:var(--ink-soft);letter-spacing:0}
+.item .price{font-family:var(--serif);color:var(--ginger-deep);font-size:1.02rem;white-space:nowrap}
+.menu-foot{
+  margin-top:42px;text-align:center;color:var(--ink-soft);font-size:.95rem;
+}
+
+/* ---------- residents ---------- */
+.cats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:22px}
+.cat{
+  background:#fff;border-radius:16px;overflow:hidden;
+  box-shadow:var(--shadow);
+  transition:transform .3s ease, box-shadow .3s ease;
+}
+.cat:hover{transform:translateY(-5px);box-shadow:var(--shadow-lift)}
+/* Each card supplies its own photo via --img. */
+.cat-photo{
+  aspect-ratio:1/1;
+  background-image:var(--img);
+  background-size:cover;
+  background-position:center;
+  background-repeat:no-repeat;
+  background-color:var(--cream-deep);
+}
+/* Marmalade is our own wide shot, zoomed in on him rather than cropped
+   to the middle of the room. */
+.cat-photo.house{
+  background-size:520% auto;
+  background-position:52% 30%;
+}
+.cat-body{padding:20px 22px 24px}
+.cat-body h3{font-family:var(--serif);font-size:1.2rem;font-weight:600;margin:0 0 2px}
+.cat-role{font-size:.75rem;letter-spacing:.14em;text-transform:uppercase;color:var(--ginger-deep);font-weight:600}
+.cat-body p{margin:12px 0 0;font-size:.93rem;color:var(--ink-soft);line-height:1.55}
+
+/* ---------- visit (dark block) ---------- */
+.visit{background:var(--ink);color:var(--cream)}
+.visit h2,.visit h3{color:var(--cream)}
+.visit .section-head p{color:rgba(248,244,236,.62)}
+.visit .eyebrow{color:#e2a262}
+.visit .eyebrow::before{background:#e2a262}
+.visit-grid{display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:start}
+.hours{list-style:none;margin:0;padding:0}
+.hours li{
+  display:flex;justify-content:space-between;gap:20px;
+  padding:15px 0;border-bottom:1px solid rgba(248,244,236,.13);
+}
+.hours li:first-child{border-top:1px solid rgba(248,244,236,.13)}
+.hours .day{color:rgba(248,244,236,.78)}
+.hours .time{font-family:var(--serif);font-size:1.05rem}
+.hours .time.closed{color:rgba(248,244,236,.4);font-style:italic}
+.visit-info p{color:rgba(248,244,236,.72);margin:0 0 26px}
+.addr{
+  font-family:var(--serif);font-size:1.45rem;line-height:1.45;color:var(--cream);margin:0 0 8px;
+}
+.fine{font-size:.88rem;color:rgba(248,244,236,.45)}
+.visit .btn.ghost{color:var(--cream);border-color:rgba(248,244,236,.3)}
+.visit .btn.ghost:hover{background:rgba(248,244,236,.08);border-color:rgba(248,244,236,.6)}
+.visit-cta{display:flex;flex-wrap:wrap;gap:14px;margin-top:34px}
+/* Pairs with .section-head.center when a section has no column beside it. */
+.visit-cta.center{justify-content:center;margin-top:0}
+
+/* ---------- booking form ---------- */
+.book-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:56px;align-items:start}
+.form{
+  background:#fff;border-radius:18px;padding:34px 32px;
+  box-shadow:var(--shadow);
+}
+.field{margin-bottom:20px}
+.field label{
+  display:block;font-size:.76rem;letter-spacing:.13em;text-transform:uppercase;
+  color:var(--ink-soft);font-weight:600;margin-bottom:8px;
+}
+.field input,.field select,.field textarea{
+  width:100%;font:inherit;font-size:1rem;color:var(--ink);
+  background:var(--cream);
+  border:1.5px solid rgba(51,40,31,.14);border-radius:10px;
+  padding:12px 14px;
+  transition:border-color .2s ease, box-shadow .2s ease, background .2s ease;
+}
+.field textarea{resize:vertical;min-height:96px}
+.field input:focus,.field select:focus,.field textarea:focus{
+  outline:none;background:#fff;
+  border-color:var(--ginger);
+  box-shadow:0 0 0 3px rgba(201,119,47,.15);
+}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.form .btn{width:100%;margin-top:8px;padding-block:15px}
+.form-note{margin:16px 0 0;font-size:.84rem;color:var(--ink-soft);text-align:center}
+.confirm{
+  display:none;
+  background:#fff;border-radius:18px;padding:40px 34px;text-align:center;
+  box-shadow:var(--shadow);border:1.5px solid rgba(201,119,47,.35);
+}
+.confirm.show{display:block}
+.confirm .tick{width:46px;height:46px;margin:0 auto 16px;color:var(--ginger)}
+.confirm .tick svg{width:100%;height:100%;display:block;fill:currentColor}
+.confirm h3{font-family:var(--serif);font-size:1.5rem;font-weight:600;margin:0 0 12px}
+.confirm p{color:var(--ink-soft);margin:0 0 8px}
+.aside-card{
+  background:var(--cream-deep);border-radius:16px;padding:28px 26px;margin-bottom:20px;
+}
+.aside-card h3{
+  font-family:var(--serif);font-size:1.15rem;font-weight:600;margin:0 0 14px;
+}
+.aside-card ul{list-style:none;margin:0;padding:0;display:grid;gap:11px}
+.aside-card li{position:relative;padding-left:26px;font-size:.95rem;color:var(--ink-soft)}
+.aside-card li::before{
+  content:"";position:absolute;left:4px;top:.6em;
+  width:7px;height:7px;border-radius:50%;background:var(--ginger);opacity:.5;
+}
+
+/* ---------- footer ---------- */
+footer{background:var(--cream-deep);padding-block:52px}
+.foot{display:flex;flex-wrap:wrap;gap:24px;justify-content:space-between;align-items:center}
+.foot small{color:var(--ink-soft);font-size:.88rem}
+.foot nav{display:flex;flex-wrap:wrap;gap:26px}
+.foot nav a{font-size:.88rem;color:var(--ink-soft);text-decoration:none}
+.foot nav a:hover{color:var(--ginger-deep)}
+
+/* ---------- reveal ---------- */
+.reveal{opacity:0;transform:translateY(22px);transition:opacity .7s ease,transform .7s ease}
+.reveal.in{opacity:1;transform:none}
+
+/* ---------- responsive ---------- */
+@media (max-width:960px){
+  .about-grid,.visit-grid,.book-grid{grid-template-columns:1fr;gap:44px}
+  .menu-grid{grid-template-columns:1fr 1fr}
+  .cats-grid{grid-template-columns:1fr 1fr}
+  .polaroid{transform:none;max-width:460px}
+}
+/* Keep the outer pills from reaching the frame edge on smaller desktops:
+   shrink them a little and pull the two widest points inwards. */
+@media (max-width:1020px){
+  .pill{padding:14px 26px;font-size:1.05rem;letter-spacing:.07em}
+  .pill-residents{--x:85%}
+  .pill-visit{--x:21%}
+}
+
+/* Below this the hero starts cropping, so the --x/--y ring would drift
+   off the cat. Drop the pills into a normal wrapped row underneath. */
+@media (max-width:760px){
+  .hero-nav{
+    position:static;
+    display:flex;flex-wrap:wrap;justify-content:center;gap:10px;
+    padding:24px 20px 4px;
+  }
+  .pill{
+    position:static;
+    transform:none;
+    padding:16px 30px;font-size:1.1rem;letter-spacing:.08em;
+  }
+  .pill:hover,.pill:focus-visible{transform:scale(1.08)}
+  .pill:active{transform:scale(1.02)}
+}
+
+@media (max-width:680px){
+  body{font-size:16px}
+  section{padding-block:76px}
+  .page-head{padding-block:30px 0}
+  .page-head + section{padding-top:44px}
+  .nav-links a:not(.btn){display:none}
+  .nav-links{gap:16px}
+  .menu-grid{grid-template-columns:1fr}
+  .field-row{grid-template-columns:1fr;gap:0}
+  .form{padding:26px 22px}
+}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  .reveal{opacity:1;transform:none;transition:none}
+  *{transition-duration:.01ms !important}
+}
